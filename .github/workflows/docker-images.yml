@@ -1,0 +1,52 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: install-dependency
+      run: pip install -r dev/requirements.txt --user
+
+    - name: start airflow
+      working-directory: dev/local
+      run: make install
+
+    - name: network smoke test
+      run: nc -zv localhost 8080
+
+    - name: list dags
+      run: docker exec $(docker ps -aqf "name=local-airflow-worker"|head -n 1) bash -c "airflow dags list| grep AML"
+
+    - name: list providers
+      run: docker exec $(docker ps -aqf "name=local-airflow-worker"|head -n 1) bash -c "airflow providers list| grep 'airflow-provider-azure-machinelearning'"
+
+    - name: wait for webserver to warm up
+      run: until [ "`docker inspect -f {{.State.Health.Status}}  $(docker ps -aqf "name=local-airflow-webserver" | head -n 1)`"=="healthy" ]; do sleep 2; echo "."; done;
+
+    - name: curl web
+      run: docker exec $(docker ps -aqf "name=local-airflow-webserver" | head -n 1) bash -c "curl -s --retry 3 retry-connrefused http://localhost:8080"
+
+    - name: shutdown
+      working-directory: dev/local
+      run: make uninstall
+
+    - name: clean up
+      working-directory: dev/local
+      run: make clean

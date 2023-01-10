@@ -1,0 +1,20 @@
+---
+package-name: airflow-provider-azure-machinelearning
+display-name: airflow-provider-azure-machinelearning
+description: Airflow provider package for Azure Machine Learning.
+docs_url: https://github.com/azure/airflow-provider-azure-machinelearning/README.md
+
+hooks:
+  - module: airflow_provider_azure_machinelearning.hooks.AzureMachineLearningHook
+
+operators:
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningLoadAndRegisterComponentOperator
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningCreateComputeResourceOperator
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningDeleteComputeResourceOperator
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningCreateDataOperator
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningCreateEndpointOperator
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningDeleteEndpointOperator
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningDeployManagedOnlineEndpointOperator
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningCreateEnvironmentOperator
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningCreateJobOperator
+  - module: airflow_provider_azure_machinelearning.operators.machine_learning.AzureMachineLearningRegisterModelOperator

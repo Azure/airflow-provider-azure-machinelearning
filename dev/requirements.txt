@@ -1,0 +1,9 @@
+apache-airflow>=2.0.0
+azure-ai-ml>=1.0
+black
+flake8
+pytest
+pre-commit
+setuptools
+twine
+wheel

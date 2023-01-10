@@ -1,0 +1,25 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 110
+target-version = ['py37', 'py38', 'py39', 'py310']
+extend-exclude = '''
+(dags_data)
+'''
+
+[tool.isort]
+add_imports = ["from __future__ import annotations"]
+append_only = true
+line_length = 110
+combine_as_imports = true
+default_section = "THIRDPARTY"
+known_first_party = ["airflow_provider_azure_machinelearning", "tests"]
+skip = ["build", "airflow_provider_azure_machinelearning/example_dags/dags_data"]
+lines_between_types = 0
+skip_glob = ["*.pyi"]
+profile = "black"
