@@ -2,7 +2,7 @@
 Airflow Provider for Azure Machine Learning
 </h1>
 
-[Source Code](https://github.com/Azure/airflow-provider-azure-machinelearning) | [Package_PyPI](https://pypi.org/project/airflow-provider-azure-machinelearning/) | [Example DAGs](/airflow_provider_azure_machinelearning/example_dags/) | [Example Docker Containers](dev/)
+[Source Code](https://github.com/Azure/airflow-provider-azure-machinelearning) | [Package_PyPI](https://pypi.org/project/airflow-provider-azure-machinelearning/) | [Example DAGs](https://github.com/Azure/airflow-provider-azure-machinelearning/tree/main/airflow_provider_azure_machinelearning/example_dags) | [Example Docker Containers](https://github.com/Azure/airflow-provider-azure-machinelearning/tree/main/dev)
 
 This package enables you to submit workflows to Azure Machine Learning from Apache Airflow.
 
