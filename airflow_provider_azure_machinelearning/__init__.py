@@ -1,4 +1,4 @@
-__version__ = "0.0.1b0"
+__version__ = "0.0.1b1"
 
 
 def get_package_name():
