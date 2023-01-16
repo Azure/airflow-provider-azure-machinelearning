@@ -126,7 +126,7 @@ class TestAzureMachineLearningHook(unittest.TestCase):
         from airflow_provider_azure_machinelearning.__init__ import get_package_name, get_package_version
 
         assert (
-            f"{get_package_name()}:{get_package_version()}"
+            f"{get_package_name()}/{get_package_version()}"
             == AzureMachineLearningHook.get_package_signature()
         )
 
