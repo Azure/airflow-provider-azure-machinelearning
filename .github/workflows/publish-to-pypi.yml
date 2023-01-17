@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-n-publish:
-    name: Build and publish Python distributions to TestPyPI adn PyPI
+    name: Build and publish Python distributions to TestPyPI and PyPI
     runs-on: ubuntu-latest
     if: github.event.pull_request.merged == true
 
