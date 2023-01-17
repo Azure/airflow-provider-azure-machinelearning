@@ -126,4 +126,4 @@ class AzureMachineLearningHook(BaseHook):
         """Returns python package_name:version"""
         from airflow_provider_azure_machinelearning.__init__ import get_package_name, get_package_version
 
-        return f"{get_package_name()}:{get_package_version()}"
+        return f"{get_package_name()}/{get_package_version()}"
