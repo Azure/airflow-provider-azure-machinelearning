@@ -17,7 +17,7 @@ In you Apache Airflow instance, run:
 ```
 pip install airflow-provider-azure-machinelearning
 ```
-Or, try it out by following examples in the [dev folder](dev/), or Airflow's [How-to-Guide](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html) to set up Airflow in Docker containers.
+Or, try it out by following examples in the [dev folder](https://github.com/Azure/airflow-provider-azure-machinelearning/tree/main/dev/), or Airflow's [How-to-Guide](https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html) to set up Airflow in Docker containers.
 
 # Configure Azure Machine Learning Connections in Airflow
 
@@ -27,9 +27,9 @@ To send workload to your Azure Machine Learning workspace from Airflow, you need
 2. On Airflow web portal, navigate to ```Admin``` --> ```Connections```, and click on ```+``` to add a new connection.
 
 3. From the "Connection Type" dropdown, select "Azure Machine Learning". You should see a form like below
-   ![Alt text](resources/Airflow_AzureMachineLearning_Connection.jpg "Azure Machine Learning Connection")
+   ![](https://github.com/Azure/airflow-provider-azure-machinelearning/blob/main/resources/Airflow_AzureMachineLearning_Connection.jpg "Azure Machine Learning Connection")
 
-4. ```Connection Id```is a unique identifier for your connection. You will also need to pass this string into AzureML Airflow operators. Check out those [example dags](airflow_provider_azure_machinelearning/example_dags/).
+4. ```Connection Id```is a unique identifier for your connection. You will also need to pass this string into AzureML Airflow operators. Check out those [example dags](https://github.com/Azure/airflow-provider-azure-machinelearning/tree/main/airflow_provider_azure_machinelearning/example_dags/).
 
 5.  ```Description``` is optional. All other fields are required.
 
@@ -67,7 +67,7 @@ airflow connections add \
 ```
 # Examples
 
-Check out [example_dags](airflow_provider_azure_machinelearning/example_dags/) on how to make use of this provider package. If you do not have a running Airflow instance, please refer to [example docker containers](dev/), or [Apache Airflow documentations\)https://airflow.apache.org/).
+Check out [example_dags](https://github.com/Azure/airflow-provider-azure-machinelearning/tree/main/airflow_provider_azure_machinelearning/example_dags) on how to make use of this provider package. If you do not have a running Airflow instance, please refer to [example docker containers](https://github.com/Azure/airflow-provider-azure-machinelearning/tree/main/dev/), or [Apache Airflow documentations\)https://airflow.apache.org/).
 
 # Dev Environment
 
@@ -76,7 +76,7 @@ To build this package, run its tests, run its linting tools, etc, you will need 
 - Via conda: ```conda env create -f dev/environment.yml```
 
 # Running the tests and linters
-- All tests are in [tests](tests) folder. To run them, from this folder, run ```pytest```
+- All tests are in [tests](https://github.com/Azure/airflow-provider-azure-machinelearning/tree/main/tests/) folder. To run them, from this folder, run ```pytest```
 - This repo uses [black](https://github.com/psf/black), [flake8](https://github.com/PyCQA/flake8), and [isort](https://github.com/PyCQA/isort) to keep coding format consistent. From this folder, run ```black .```, ```isort .```, and ```flake8```.
 
 # Issues
