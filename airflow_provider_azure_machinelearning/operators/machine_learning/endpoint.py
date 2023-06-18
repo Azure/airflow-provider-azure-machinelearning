@@ -201,3 +201,80 @@ class AzureMachineLearningDeployEndpointOperator(BaseOperator):
             raise KeyError(f"Failed to deploy endpoint {self.deployment.endpoint_name}.")
 
         return self.deployment.endpoint_name
+
+
+class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
+    """
+    Executes Azure ML SDK to invoke an endpoint.
+
+    :param conn_id: The connection identifier for connecting to Azure Machine Learning.
+    :param endpoint: The spec of Azure ML endpoint
+    :waiting: When true, the operator blocks till the Azure ML endpoint deployment is completed.
+
+    Returns name(id) of the Azure ML endpoint.
+    """
+
+    ui_color = "white"
+    ui_fgcolor = "blue"
+
+    def __init__(
+        self,
+        *,
+        endpoint: Union[BatchDeployment, KubernetesOnlineDeployment, ManagedOnlineDeployment],
+        inputs,
+        waiting: bool = False,
+        conn_id: str = None,
+        **kwargs,
+    ) -> None:
+
+        super().__init__(**kwargs)
+
+        self.endpoint = endpoint
+        self.waiting = waiting
+        self.inputs = inputs
+        self.conn_id = conn_id
+        self.hook = None
+        self.ml_client = None
+        self.job = None
+
+    def execute(self, context: Context) -> None:
+
+        self.log.info(
+            f"Executing { __class__.__name__} to deploy model to Endpoint {self.deployment.endpoint_name}."
+        )
+        self.hook = AzureMachineLearningHook(self.conn_id)
+        self.ml_client = self.hook.get_client()
+
+        self.log.info(f"Invoking Endpoint: {self.endpoint}.")
+
+        
+        try:
+            self.ml_client.batch_endpoints.get(name=self.endpoint)
+        except Exception:
+            raise ValueError(f"Can't find any endpoint called {self.endpoint}")
+        
+        self.job = self.ml_client.batch_endpoints.invoke(endpoint_name=self.endpoint, inputs=self.inputs)
+
+        try:
+            if self.waiting:
+                self.ml_client.jobs.stream(name=self.job.name)
+                self.log.info(f"{self.job.name} has finished successfully.")
+        except Exception:
+            self.log.info(f"{self.job.name} has finished with errors.")
+            raise RuntimeError(f"{self.job.name} has finished with errors.")
+
+    
+    def on_kill(self) -> None:
+        """
+        
+        Stopping Azure ML Job triggered by endpoint when canceling from airflow
+
+        """
+        
+        if self.job and self.job.name:
+            self.ml_client.jobs.cancel(self.job.name)
+        self.log.info("Job %s has been cancelled successfully.", self.returned_job.name)
+
+
+
+
