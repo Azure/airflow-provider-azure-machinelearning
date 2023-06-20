@@ -220,7 +220,7 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
     def __init__(
         self,
         *,
-        endpoint: Union[BatchDeployment, KubernetesOnlineDeployment, ManagedOnlineDeployment],
+        endpoint: str,
         inputs,
         waiting: bool = False,
         conn_id: str = None,
