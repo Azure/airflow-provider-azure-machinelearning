@@ -56,7 +56,6 @@ class AzureMachineLearningCreateComputeResourceOperator(BaseOperator):
         waiting: bool = True,
         **kwargs,
     ) -> None:
-
         super().__init__(**kwargs)
 
         self.compute = compute
@@ -66,7 +65,6 @@ class AzureMachineLearningCreateComputeResourceOperator(BaseOperator):
         self.ml_client = None
 
     def execute(self, context: Context) -> None:
-
         self.log.info(f"Executing the { __class__.__name__}  to create compute target { self.compute.name}.")
         self.hook = AzureMachineLearningHook(self.conn_id)
         self.ml_client = self.hook.get_client()
@@ -116,7 +114,6 @@ class AzureMachineLearningDeleteComputeResourceOperator(BaseOperator):
         waiting: bool = True,
         **kwargs,
     ) -> None:
-
         super().__init__(**kwargs)
 
         self.compute_name = compute_name
@@ -126,7 +123,6 @@ class AzureMachineLearningDeleteComputeResourceOperator(BaseOperator):
         self.ml_client = None
 
     def execute(self, context: Context) -> None:
-
         self.log.info(f"Executing the { __class__.__name__}  to delete compute target { self.compute_name}.")
         self.hook = AzureMachineLearningHook(self.conn_id)
         self.ml_client = self.hook.get_client()

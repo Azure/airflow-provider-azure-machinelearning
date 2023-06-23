@@ -23,9 +23,10 @@ if TYPE_CHECKING:
 This examples shows how one can take advantage of the authention mechanisms built by this package and orchestration provided by Airflow.
 One can direclty code on azure-ai-ml SDK interfaces, instead of operators provided by this pckage.
 """
+
+
 # flake8: noqa: C901
 def tain_and_infer_callerable(base_path):
-
     import logging
     import os
 
@@ -224,7 +225,6 @@ def tain_and_infer_callerable(base_path):
 
 
 def diabetes_callerable(code_file_path):
-
     import logging
 
     from azure.ai.ml import Input, command
@@ -270,7 +270,6 @@ with DAG(
     schedule_interval="0 18 * * *",
     tags=[],
 ) as dag:
-
     if not shutil.which("virtualenv"):
         raise KeyError("The virtalenv_python example task requires virtualenv, please install it.")
 
@@ -301,7 +300,6 @@ with DAG(
         aml_version_task = EmptyOperator(task_id=f"AML_{aml_release_version}")
         start_task >> aml_version_task
         for blob_version in ["12.14.0b1", "12.14.0b2"]:
-
             blob_version_task = EmptyOperator(task_id=f"AML_{aml_release_version}_Blob_{blob_version}")
 
             diabetes_task = PythonVirtualenvOperator(

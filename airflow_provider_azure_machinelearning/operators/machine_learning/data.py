@@ -31,7 +31,6 @@ class AzureMachineLearningCreateDataOperator(BaseOperator):
         conn_id: str = None,
         **kwargs,
     ) -> None:
-
         super().__init__(**kwargs)
 
         self.data_asset = data_asset
@@ -40,7 +39,6 @@ class AzureMachineLearningCreateDataOperator(BaseOperator):
         self.ml_client = None
 
     def execute(self, context: Context) -> None:
-
         self.log.info(f"Executing the { __class__.__name__}  to create data asset {self.data_asset.name}.")
         self.hook = AzureMachineLearningHook(self.conn_id)
         self.ml_client = self.hook.get_client()

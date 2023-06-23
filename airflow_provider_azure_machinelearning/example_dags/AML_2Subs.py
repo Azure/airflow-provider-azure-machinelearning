@@ -30,7 +30,6 @@ with DAG(
     schedule_interval="0 17 * * *",
     tags=["AML"],
 ) as dag:
-
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     parent_dir = os.path.join(curr_dir, "dags_data/jobs/pipeline/1a_pipeline_with_components_from_yaml/")
     train_model = load_component(source=parent_dir + "/train_model.yml")

@@ -107,7 +107,6 @@ with DAG(
 
     @pipeline()
     def parallel_in_pipeline(pipeline_job_data_path, pipeline_score_model):
-
         prepare_file_tabular_data = prepare_data(input_data=pipeline_job_data_path)
         # output of file & tabular data should be type MLTable
         prepare_file_tabular_data.outputs.file_output_data.type = AssetTypes.MLTABLE

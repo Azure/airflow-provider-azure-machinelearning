@@ -52,7 +52,6 @@ class AzureMachineLearningCreateEnvironmentOperator(BaseOperator):
         conn_id: str = None,
         **kwargs,
     ) -> None:
-
         super().__init__(**kwargs)
 
         self.environment = environment
@@ -61,7 +60,6 @@ class AzureMachineLearningCreateEnvironmentOperator(BaseOperator):
         self.ml_client = None
 
     def execute(self, context: Context) -> None:
-
         self.log.info(
             f"Executing the { __class__.__name__} to create new environment {self.environment.name}."
         )

@@ -42,7 +42,6 @@ class AzureMachineLearningCreateEndpointOperator(BaseOperator):
         conn_id: str = None,
         **kwargs,
     ) -> None:
-
         super().__init__(**kwargs)
 
         self.endpoint = endpoint
@@ -52,7 +51,6 @@ class AzureMachineLearningCreateEndpointOperator(BaseOperator):
         self.ml_client = None
 
     def execute(self, context: Context) -> None:
-
         self.log.info(f"Executing { __class__.__name__} to create new endpoint {self.endpoint.name}.")
         self.hook = AzureMachineLearningHook(self.conn_id)
         self.ml_client = self.hook.get_client()
@@ -106,7 +104,6 @@ class AzureMachineLearningDeleteEndpointOperator(BaseOperator):
         conn_id: str = None,
         **kwargs,
     ) -> None:
-
         super().__init__(**kwargs)
 
         self.endpoint_name = endpoint_name
@@ -117,7 +114,6 @@ class AzureMachineLearningDeleteEndpointOperator(BaseOperator):
         self.ml_client = None
 
     def execute(self, context: Context) -> None:
-
         self.log.info(f"Executing { __class__.__name__} to Delete Endpoint {self.endpoint_name}.")
         self.hook = AzureMachineLearningHook(self.conn_id)
         self.ml_client = self.hook.get_client()
@@ -172,7 +168,6 @@ class AzureMachineLearningDeployEndpointOperator(BaseOperator):
         conn_id: str = None,
         **kwargs,
     ) -> None:
-
         super().__init__(**kwargs)
 
         self.deployment = deployment
@@ -182,7 +177,6 @@ class AzureMachineLearningDeployEndpointOperator(BaseOperator):
         self.ml_client = None
 
     def execute(self, context: Context) -> None:
-
         self.log.info(
             f"Executing { __class__.__name__} to deploy model to Endpoint {self.deployment.endpoint_name}."
         )
