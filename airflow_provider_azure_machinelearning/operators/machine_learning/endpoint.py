@@ -220,7 +220,8 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
     def __init__(
         self,
         *,
-        endpoint: str,
+        endpoint_name: str,
+        endpoint_type: str,
         inputs,
         waiting: bool = False,
         conn_id: str = None,
@@ -229,7 +230,8 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
 
         super().__init__(**kwargs)
 
-        self.endpoint = endpoint
+        self.endpoint_name = endpoint_name
+        self.endpoint_type = endpoint_type
         self.waiting = waiting
         self.inputs = inputs
         self.conn_id = conn_id
@@ -244,16 +246,14 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
         )
         self.hook = AzureMachineLearningHook(self.conn_id)
         self.ml_client = self.hook.get_client()
-
-        self.log.info(f"Invoking Endpoint: {self.endpoint}.")
-
         
         try:
-            self.ml_client.batch_endpoints.get(name=self.endpoint)
+            self.get_caller().get(name=self.endpoint_name)
         except Exception:
-            raise ValueError(f"Can't find any endpoint called {self.endpoint}")
+            raise ValueError(f"Can't find any endpoint called {self.endpoint_name}")
         
-        self.job = self.ml_client.batch_endpoints.invoke(endpoint_name=self.endpoint, inputs=self.inputs)
+        self.log.info(f"Invoking Endpoint: {self.endpoint_name}.")
+        self.job = self.get_caller().invoke(endpoint_name=self.endpoint_name, inputs=self.inputs)
 
         try:
             if self.waiting:
@@ -263,6 +263,13 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
             self.log.info(f"{self.job.name} has finished with errors.")
             raise RuntimeError(f"{self.job.name} has finished with errors.")
 
+    def get_caller(self):
+        if self.endpoint_type == "online":
+            return self.ml_client.online_endpoints
+        elif self.endpoint_type == "batch":
+            return self.ml_client.batch_endpoints
+        else:
+            raise KeyError("Unrecognized Endpoint type.")
     
     def on_kill(self) -> None:
         """
@@ -274,7 +281,3 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
         if self.job and self.job.name:
             self.ml_client.jobs.cancel(self.job.name)
         self.log.info("Job %s has been cancelled successfully.", self.returned_job.name)
-
-
-
-
