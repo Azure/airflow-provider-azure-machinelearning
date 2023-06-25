@@ -222,7 +222,7 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
         *,
         endpoint_name: str,
         endpoint_type: str,
-        inputs,
+        inputs: dict = {},
         waiting: bool = False,
         conn_id: str = None,
         **kwargs,
@@ -232,8 +232,8 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
 
         self.endpoint_name = endpoint_name
         self.endpoint_type = endpoint_type
-        self.waiting = waiting
         self.inputs = inputs
+        self.waiting = waiting
         self.conn_id = conn_id
         self.hook = None
         self.ml_client = None
@@ -249,9 +249,10 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
         
         try:
             self.get_caller().get(name=self.endpoint_name)
-        except Exception:
-            raise ValueError(f"Can't find any endpoint called {self.endpoint_name}")
-        
+        except AmlExceptions.ResourceNotFoundError:
+            self.log.info(f"Endpoint {self.endpoint_name} does not exist. Returning.")
+            return self.endpoint_name
+
         self.log.info(f"Invoking Endpoint: {self.endpoint_name}.")
         self.job = self.get_caller().invoke(endpoint_name=self.endpoint_name, inputs=self.inputs)
 
@@ -278,6 +279,6 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
 
         """
         
-        if self.job and self.job.name:
+        if self.job and self.job.name and self.waiting:
             self.ml_client.jobs.cancel(self.job.name)
         self.log.info("Job %s has been cancelled successfully.", self.returned_job.name)

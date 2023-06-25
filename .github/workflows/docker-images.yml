@@ -1,0 +1,65 @@
+name: Docker Image builds
+
+on:
+  push:
+    branches: [ "main", "release**" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "main", "release**" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        include:
+          - build-type: "local"
+            port-number: "8080"
+          - build-type: "pypi"
+            port-number: "8081"
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: install-dependency
+      run: pip install -r dev/requirements.txt --user
+
+    - name: start airflow
+      working-directory: dev/${{ matrix.build-type }}
+      run: make install
+
+    - name: Sleep for 60s
+      uses: juliangruber/sleep-action@v1
+      with:
+        time: 60s
+
+    - name: network smoke test
+      run: nc -zv localhost ${{ matrix.port-number }}
+
+    - name: list dags
+      run: docker exec $(docker ps -aqf "name=${{ matrix.build-type }}-airflow-worker"|head -n 1) bash -c "airflow dags list| grep AML"
+
+    - name: list providers
+      run: docker exec $(docker ps -aqf "name=${{ matrix.build-type }}-airflow-worker"|head -n 1) bash -c "airflow providers list| grep 'airflow-provider-azure-machinelearning'"
+
+    - name: wait for webserver to warm up
+      run: until [ "`docker inspect -f {{.State.Health.Status}}  $(docker ps -aqf "name=${{ matrix.build-type }}-airflow-webserver" | head -n 1)`"=="healthy" ]; do sleep 2; echo "."; done;
+
+    - name: curl web
+      run: docker exec $(docker ps -aqf "name=${{ matrix.build-type }}-airflow-webserver" | head -n 1) bash -c "curl -s --retry 10 --retry-delay 10  retry-connrefused  http://localhost:8080"
+
+    - name: shutdown
+      working-directory: dev/${{ matrix.build-type }}
+      run: make uninstall
+
+    - name: clean up
+      working-directory: dev/${{ matrix.build-type }}
+      run: make clean
