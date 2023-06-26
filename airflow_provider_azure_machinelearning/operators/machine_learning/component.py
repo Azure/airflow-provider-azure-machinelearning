@@ -29,7 +29,6 @@ class AzureMachineLearningLoadAndRegisterComponentOperator(BaseOperator):
         conn_id: str = None,
         **kwargs,
     ) -> None:
-
         super().__init__(**kwargs)
 
         self.source = source
@@ -39,7 +38,6 @@ class AzureMachineLearningLoadAndRegisterComponentOperator(BaseOperator):
         self.component = None
 
     def execute(self, context: Context) -> None:
-
         self.log.info(f"Executing { __class__.__name__} to create component defined at: {self.source}.")
         try:
             self.component = load_component(source=self.source)

@@ -58,7 +58,6 @@ class AzureMachineLearningCreateJobOperator(BaseOperator):
         waiting: bool = False,
         **kwargs,
     ) -> None:
-
         super().__init__(**kwargs)
 
         self.job = job
@@ -70,7 +69,6 @@ class AzureMachineLearningCreateJobOperator(BaseOperator):
         self.job_end_point = None
 
     def execute(self, context: Context) -> None:
-
         self.log.info(
             f"Executing the { __class__.__name__}  to create compute target {self.job.display_name}."
         )

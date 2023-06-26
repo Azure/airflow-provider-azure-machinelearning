@@ -31,7 +31,6 @@ with DAG(
     schedule_interval="0 17 * * *",
     tags=["AML"],
 ) as dag:
-
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     training_mltable_path = os.path.join(
         curr_dir,
