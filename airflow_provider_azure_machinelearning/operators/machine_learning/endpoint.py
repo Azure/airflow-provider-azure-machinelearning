@@ -242,7 +242,7 @@ class AzureMachineLearningInvokeEndpointOperator(BaseOperator):
     def execute(self, context: Context) -> None:
 
         self.log.info(
-            f"Executing { __class__.__name__} to deploy model to Endpoint {self.deployment.endpoint_name}."
+            f"Executing { __class__.__name__} to deploy Endpoint {self.endpoint_name}."
         )
         self.hook = AzureMachineLearningHook(self.conn_id)
         self.ml_client = self.hook.get_client()
