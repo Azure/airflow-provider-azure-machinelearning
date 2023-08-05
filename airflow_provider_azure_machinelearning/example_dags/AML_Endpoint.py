@@ -10,6 +10,8 @@ from typing import TYPE_CHECKING
 import pendulum
 from airflow import DAG
 from airflow.operators.empty import EmptyOperator
+
+from azure.ai.ml import Input
 from azure.ai.ml.constants import AssetTypes, BatchDeploymentOutputAction
 from azure.ai.ml.entities import (
     AmlCompute,
@@ -31,6 +33,8 @@ from airflow_provider_azure_machinelearning.operators.machine_learning.endpoint 
     AzureMachineLearningCreateEndpointOperator,
     AzureMachineLearningDeleteEndpointOperator,
     AzureMachineLearningDeployEndpointOperator,
+    AzureMachineLearningInvokeBatchEndpointOperator,
+    AzureMachineLearningInvokeOnlineEndpointOperator
 )
 from airflow_provider_azure_machinelearning.operators.machine_learning.model import (
     AzureMachineLearningRegisterModelOperator,
@@ -82,6 +86,8 @@ with DAG(
         instance_type="Standard_DS3_v2",
         instance_count=1,
     )
+
+
     deploy_managed_task = AzureMachineLearningDeployEndpointOperator(
         task_id="ManagedOnline_deployment_task",
         conn_id=connection_id,
@@ -162,12 +168,24 @@ with DAG(
         retry_settings=BatchRetrySettings(max_retries=3, timeout=300),
         logging_level="info",
     )
+
     deploy_batch_task = AzureMachineLearningDeployEndpointOperator(
         task_id="batch_deployment_task",
         conn_id=connection_id,
         deployment=batch_deployment,
+        set_default=True,
         waiting=True,
     )
+
+    inputs = Input(type=AssetTypes.URI_FILE,path="https://azuremlexampledata.blob.core.windows.net/data/heart-disease-uci/data/heart.csv")
+    invoke_batch_task = AzureMachineLearningInvokeBatchEndpointOperator(
+        task_id="invoke_batch_endpoint_task",
+        conn_id=connection_id,
+        endpoint_name=batch_endpoint.name,
+        inputs={"heart_dataset": inputs},
+        waiting=True,
+    )
+
     delete_batch_endpoint_task = AzureMachineLearningDeleteEndpointOperator(
         task_id="Delete_Batch_Endpoint",
         conn_id=connection_id,
@@ -196,7 +214,8 @@ with DAG(
     (
         start_batch_task
         >> [register_batch_model_task, create_batch_endpoint, batch_compute_create_task]
-        >> deploy_batch_task
+        >> deploy_batch_task 
+        >> invoke_batch_task
         >> [delete_batch_endpoint_task, delete_batch_compute_task]
         >> batch_success_task
     )
