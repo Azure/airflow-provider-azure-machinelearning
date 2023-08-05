@@ -454,7 +454,7 @@ class AzureMachineLearningInvokeBatchEndpointOperator(unittest.TestCase):
     @patch("azure.ai.ml.MLClient")
     def test_execute_batch_not_exist(self, mock_client, mock_hook, mock_context):
         mock_hook.return_value = mock_client
-        mock_client.online_endpoints.get.side_effect = AmlExceptions.ResourceNotFoundError
+        mock_client.batch_endpoints.get.side_effect = AmlExceptions.ResourceNotFoundError
 
         endpoint_name = "name"
         AzureMachineLearningInvokeBatchEndpointOperator(
