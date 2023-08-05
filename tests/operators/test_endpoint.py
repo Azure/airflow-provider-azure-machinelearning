@@ -21,6 +21,8 @@ from airflow_provider_azure_machinelearning.operators.machine_learning.endpoint 
     AzureMachineLearningCreateEndpointOperator,
     AzureMachineLearningDeleteEndpointOperator,
     AzureMachineLearningDeployEndpointOperator,
+    AzureMachineLearningInvokeBatchEndpointOperator,
+    AzureMachineLearningInvokeOnlineEndpointOperator,
     AzureMachineLearningHook,
     BatchEndpoint,
     KubernetesOnlineEndpoint,
@@ -442,6 +444,54 @@ class TestAzureMachineLearningDeployEndpointOperator(unittest.TestCase):
         mock_hook.assert_called_once()
         mock_client.begin_create_or_update.assert_called_once_with(mock_deployment)
 
+
+class AzureMachineLearningInvokeBatchEndpointOperator(unittest.TestCase):
+    @patch("airflow.utils.context.Context")
+    @patch.object(
+        AzureMachineLearningHook,
+        "get_client",
+    )
+    @patch("azure.ai.ml.MLClient")
+    def test_execute_batch_not_exist(self, mock_client, mock_hook, mock_context):
+        mock_hook.return_value = mock_client
+        mock_client.batch_endpoints.get.side_effect = AmlExceptions.ResourceNotFoundError
+
+        endpoint_name = "name"
+        AzureMachineLearningInvokeBatchEndpointOperator(
+            task_id="test_task_id",
+            endpoint_name=endpoint_name,
+            inputs={},
+            conn_id="test_connection_id",
+            waiting=False,
+        ).execute(mock_context)
+
+        mock_hook.assert_called_once()
+        mock_client.batch_endpoints.get.assert_called_once()
+        mock_client.batch_endpoints.invoke.assert_not_called()
+
+    @patch("airflow.utils.context.Context")
+    @patch.object(
+        AzureMachineLearningHook,
+        "get_client",
+    )
+    @patch("azure.ai.ml.MLClient")
+    def test_execute_batch_exist(self, mock_client, mock_hook, mock_context):
+        mock_hook.return_value = mock_client
+
+        endpoint_name = "name"
+        AzureMachineLearningInvokeBatchEndpointOperator(
+            task_id="test_task_id",
+            endpoint_name=endpoint_name,
+            endpoint_type="online",
+            inputs={},
+            conn_id="test_connection_id",
+            waiting=False,
+        ).execute(mock_context)
+
+        mock_hook.assert_called_once()
+        mock_client.batch_endpoints.get.assert_called_once()
+        mock_client.batch_endpoints.invoke.assert_called_once_with(name=endpoint_name)
+  
 
 if __name__ == "__main__":
     unittest.main()
