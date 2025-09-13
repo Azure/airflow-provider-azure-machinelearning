@@ -9,9 +9,9 @@ Tests all authentication methods including:
 - Field parsing and backward compatibility
 
 Run tests:
-    pytest tests/hooks/test_machine_learning_new.py
+    pytest tests/hooks/test_machine_learning.py
 or,
-    python3 -m unittest tests.hooks.test_machine_learning_new
+    python3 -m unittest tests.hooks.test_machine_learning
 """
 
 from __future__ import annotations
